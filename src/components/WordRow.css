@@ -1,0 +1,19 @@
+.WordRow {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 12px;
+}
+
+.WordRow .LetterSpace {
+    margin-left: 12px;
+}
+
+.WordRow .LetterSpace:first-child {
+    margin-left: 0;
+}
+
+.WordRow.revealed .LetterSpace {
+    transition: none;
+}

@@ -7,15 +7,13 @@ function App() {
   const [wordLength, setWordLength] = useState(5)
   const [secretWord, setSecretWord] = useState()
 
+  console.log(secretWord)
+
   useEffect(() => {
     setSecretWord(getWordOfLength(wordLength))
-  }, [wordLength, getWordOfLength])
+  }, [wordLength])
 
-  return (
-    <div className="App">
-      <GameBoard word={secretWord} />
-    </div>
-  )
+  return <div className="App">{!!secretWord && <GameBoard word={secretWord} />}</div>
 }
 
 export default App

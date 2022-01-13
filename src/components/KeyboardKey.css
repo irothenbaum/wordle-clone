@@ -1,0 +1,36 @@
+.KeyboardKey {
+    width: 40px;
+    height: 40px;
+    background-color: #ddd;
+    padding: 12px;
+    text-transform: uppercase;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.KeyboardKey:hover {
+    background-color: #e4e4e4;
+}
+
+.KeyboardKey.disabled {
+    background-color: #f0f0f0;
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+.KeyboardKey.wrong {
+    background-color: #333;
+    color: #fff;
+}
+
+.KeyboardKey.almost {
+    background-color: #bea000;
+}
+
+.KeyboardKey.correct {
+    background-color: #1b9b00;
+}
