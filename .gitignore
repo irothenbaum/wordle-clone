@@ -13,7 +13,7 @@ allWords.txt
 # production
 /build
 # for my custom webpack builds
-/dist
+/public/bundle.*
 
 # misc
 .DS_Store
