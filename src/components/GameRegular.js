@@ -7,6 +7,7 @@ import Keyboard from './Keyboard'
 import {determineGuessResults, getWordOfLength} from '../lib/utilities'
 import {ALMOST, CORRECT, WRONG, SCENE_MENU, BOARD_ROWS} from '../lib/constants'
 import GameOverResults from './GameOverResults'
+import useQuickRevertBoolean from '../hooks/useQuickRevertBoolean'
 
 function GameRegular(props) {
   const [previousGuesses, setPreviousGuesses] = useState([])
@@ -15,6 +16,9 @@ function GameRegular(props) {
   const [letterStates, setLetterStates] = useState({})
   const [gameOver, setGameOver] = useState(null)
   const [secretWord, setSecretWord] = useState('')
+
+  // TODO: when should we shake the input?
+  const {status: shouldShake, toggleOn: setShouldShake} = useQuickRevertBoolean()
 
   const handleGuess = () => {
     if (userGuess.length < secretWord.length) {

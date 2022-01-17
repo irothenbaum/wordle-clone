@@ -25,6 +25,7 @@ function WordRowReversed(props) {
             status={status}
             isFlipped={index >= revealPosition}
             points={props.points && revealPosition >= index ? props.points[index] : null}
+            isShaking={props.shakePattern && props.shakePattern[index]}
           />
         )
       })}
@@ -39,6 +40,7 @@ WordRowReversed.propTypes = {
   points: PropTypes.array,
   showResults: PropTypes.bool,
   onRevealed: PropTypes.func,
+  shakePattern: PropTypes.array,
 }
 
 export default WordRowReversed

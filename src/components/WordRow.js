@@ -33,6 +33,7 @@ function WordRow(props) {
             key={`${letter}-${index}`}
             letter={guessedLetter}
             status={status}
+            isShaking={props.isShaking}
           />
         )
       })}
@@ -46,6 +47,7 @@ WordRow.propTypes = {
   showResults: PropTypes.bool,
   isRevealed: PropTypes.bool,
   onRevealed: PropTypes.func,
+  isShaking: PropTypes.bool,
 }
 
 export default WordRow

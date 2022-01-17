@@ -1,8 +1,9 @@
 import {WRONG, CORRECT, ALMOST} from './constants'
 
 class InvalidGuess extends Error {
-  constructor(guess, word) {
+  constructor(guess, word, mismatchPositions) {
     super(`"${guess}" is not a valid solution for word "${word}"`)
+    this.mismatchPositions = mismatchPositions
   }
 }
 
@@ -103,10 +104,12 @@ export function getPointsForGuessReverse(guess, word, pattern) {
 
   let resultingPattern = determineGuessResults(guess, word)
   // if any of the resulting letter statuses do not match the canonical pattern, it means the word does not satisfy the criteria
-  let isMismatch = resultingPattern.some((guessP, index) => pattern[index] !== guessP)
+  let mismatch = resultingPattern.map((guessP, index) => {
+    return pattern[index] !== guessP
+  })
 
-  if (isMismatch) {
-    throw new InvalidGuess(guess, word)
+  if (mismatch.some(s => s)) {
+    throw new InvalidGuess(guess, word, mismatch)
   }
 
   return pattern.map((letterStatus, index) => CONST_TO_POINTS[letterStatus] * getLetterPointValue(guess.charAt(index)))

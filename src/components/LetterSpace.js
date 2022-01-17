@@ -6,9 +6,11 @@ function LetterSpace(props) {
   const status = props.status || LetterSpace.STATUS_NULL
 
   return (
-    <div className={`LetterSpace ${status} ${props.isFlipped ? 'flipped' : ''}`}>
-      <div className="Card CardFront">{props.points || props.letter}</div>
-      <div className="Card CardBack">{props.letter}</div>
+    <div className={`LetterSpace ${status} ${props.isFlipped ? 'flipped' : ''} ${props.isShaking ? 'shake' : ''}`}>
+      <div className="LetterSpaceInner">
+        <div className="Card CardFront">{props.points || props.letter}</div>
+        <div className="Card CardBack">{props.letter}</div>
+      </div>
     </div>
   )
 }
@@ -22,6 +24,7 @@ LetterSpace.propTypes = {
   letter: PropTypes.string,
   status: PropTypes.string,
   isFlipped: PropTypes.bool,
+  isShaking: PropTypes.bool,
   points: PropTypes.number,
 }
 

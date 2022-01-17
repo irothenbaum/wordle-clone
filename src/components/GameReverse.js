@@ -5,9 +5,9 @@ import {useEffect} from 'react'
 import Keyboard from './Keyboard'
 import {getPointsForGuessReverse, getRandomPatternsFromWord, getWordOfLength} from '../lib/utilities'
 import {ALMOST, CORRECT, WRONG, SCENE_MENU, BOARD_ROWS} from '../lib/constants'
-import GameOverResults from './GameOverResults'
 import WordRowReversed from './WordRowReversed'
 import GameOverResultsReverse from './GameOverResultsReverse'
+import useQuickRevertBoolean from '../hooks/useQuickRevertBoolean'
 
 function GameRegular(props) {
   const [previousGuesses, setPreviousGuesses] = useState([])
@@ -16,6 +16,8 @@ function GameRegular(props) {
   const [finalWord, setFinalWord] = useState('')
   const [patterns, setPatterns] = useState([])
   const [points, setPoints] = useState([])
+  const {status: shouldShake, toggleOn: setShouldShake} = useQuickRevertBoolean()
+  const [misMatchPositions, setMisMatchPositions] = useState([])
 
   useEffect(() => {
     const word = getWordOfLength(props.wordLength)
@@ -43,7 +45,8 @@ function GameRegular(props) {
       setPoints([...points, pointsAwarded])
     } catch (err) {
       // word does not match
-      console.error(err)
+      setShouldShake()
+      setMisMatchPositions(err.mismatchPositions)
     }
   }
 
@@ -70,13 +73,14 @@ function GameRegular(props) {
             points={points[index]}
             word={guessedWord}
             isFocused={isFocused}
+            shakePattern={isFocused && shouldShake ? misMatchPositions : []}
             showResults={isFocused && index === points.length - 1}
             onRevealed={handleRevealPointsComplete}
           />
         )
       })}
 
-      <WordRowReversed word={finalWord} statusPattern={[...finalWord].map(char => CORRECT)} />
+      <WordRowReversed word={finalWord} isShaking={shouldShake} statusPattern={[...finalWord].map(char => CORRECT)} />
 
       <Keyboard
         value={userGuess}
