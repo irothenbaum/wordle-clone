@@ -1,21 +1,48 @@
 import './Keyboard.css'
+import React, {useCallback, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import KeyboardKey from './KeyboardKey'
+import useKeyListener from '../hooks/useKeyListener'
 
 function Keyboard(props) {
-  const handleKeyClick = char => {
-    if (props.isDisabled) {
-      return
-    }
+  const handleKeyClick = useCallback(
+    char => {
+      if (props.isDisabled) {
+        return
+      }
 
-    if (char === KeyboardKey.KEY_DELETE) {
-      props.onChange(props.value.substr(0, props.value.length - 1))
-    } else if (char === KeyboardKey.KEY_SUBMIT) {
-      props.onComplete()
-    } else {
-      props.onChange(props.value + char)
-    }
-  }
+      if (char === KeyboardKey.KEY_DELETE) {
+        props.onChange(props.value.substr(0, props.value.length - 1))
+      } else if (char === KeyboardKey.KEY_SUBMIT) {
+        props.onComplete()
+      } else if (!props.isFull) {
+        props.onChange(props.value + char)
+      }
+    },
+    [props.isFull, props.isDisabled, props.onChange, props.onComplete, props.value],
+  )
+
+  const handleKeyPress = useCallback(
+    (char, code) => {
+      switch (char) {
+        case 'Backspace':
+          handleKeyClick(KeyboardKey.KEY_DELETE)
+          break
+
+        case 'Enter':
+          handleKeyClick(KeyboardKey.KEY_SUBMIT)
+          break
+
+        default:
+          if (char && char.length === 1) {
+            handleKeyClick(char.toLowerCase())
+          }
+      }
+    },
+    [handleKeyClick],
+  )
+
+  const {} = useKeyListener(handleKeyPress)
 
   const letterStates = props.letterStates || {}
 

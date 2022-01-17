@@ -1,19 +1,37 @@
 import './App.css'
-import {useEffect, useState} from 'react'
-import {getWordOfLength} from '../lib/utilities'
-import GameBoard from './GameBoard'
+import {useCallback, useEffect, useState} from 'react'
+import GameMenu from './GameMenu'
+import {SCENE_GAME_MULTIPLAYER, SCENE_GAME_REGULAR, SCENE_GAME_REVERSE, SCENE_MENU} from '../lib/constants'
+import GameRegular from './GameRegular'
+import GameReverse from './GameReverse'
+
+const sceneMap = {
+  [SCENE_MENU]: GameMenu,
+  [SCENE_GAME_REGULAR]: GameRegular,
+  [SCENE_GAME_REVERSE]: GameReverse,
+}
 
 function App() {
-  const [wordLength, setWordLength] = useState(5)
-  const [secretWord, setSecretWord] = useState()
+  const [scene, setScene] = useState(SCENE_MENU)
+  const [sceneProps, setSceneProps] = useState({})
 
-  console.log(secretWord)
+  const goToScene = (scene, props) => {
+    setScene(scene)
+    setSceneProps(props)
+  }
 
-  useEffect(() => {
-    setSecretWord(getWordOfLength(wordLength))
-  }, [wordLength])
+  const getScene = useCallback(() => {
+    const Comp = sceneMap[scene]
 
-  return <div className="App">{!!secretWord && <GameBoard word={secretWord} />}</div>
+    if (!Comp) {
+      console.error('Missing component for scene ' + scene)
+      return null
+    }
+
+    return <Comp {...sceneProps} goToScene={goToScene} />
+  }, [scene])
+
+  return <div className="App">{getScene()}</div>
 }
 
 export default App

@@ -24,7 +24,7 @@
     color: #fff;
 }
 
-.LetterSpace.wrong, .LetterSpace.almost, .LetterSpace.correct {
+.LetterSpace.flipped {
     transform: rotateY(180deg);
 }
 

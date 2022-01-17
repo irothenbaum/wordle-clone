@@ -17,3 +17,8 @@
 .WordRow.revealed .LetterSpace {
     transition: none;
 }
+
+.WordRow .WithPointsContainer .points {
+    margin-top: 12px;
+    text-align: center;
+}

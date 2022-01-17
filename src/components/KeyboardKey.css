@@ -1,8 +1,7 @@
 .KeyboardKey {
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     background-color: #ddd;
-    padding: 12px;
     text-transform: uppercase;
     font-weight: bold;
     cursor: pointer;
@@ -10,6 +9,8 @@
     user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
+    text-align: center;
+    line-height: 30px;
 }
 
 .KeyboardKey:hover {
