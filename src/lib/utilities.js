@@ -70,13 +70,6 @@ export const determineGuessResults = (guessedWord, secretWord) => {
 }
 
 /**
- * @returns {string}
- */
-export const randomCharacters = () => {
-  Math.random().toString(36).substr(2)
-}
-
-/**
  * @param {string} char
  * @return {number}
  */

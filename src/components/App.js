@@ -9,6 +9,7 @@ const sceneMap = {
   [SCENE_MENU]: GameMenu,
   [SCENE_GAME_REGULAR]: GameRegular,
   [SCENE_GAME_REVERSE]: GameReverse,
+  [SCENE_GAME_MULTIPLAYER]: GameVersus,
 }
 
 function App() {

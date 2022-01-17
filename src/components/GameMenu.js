@@ -1,7 +1,6 @@
 import './GameMenu.css'
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
-import {randomCharacters} from '../lib/utilities'
 import {BOARD_ROWS, SCENE_GAME_REGULAR, SCENE_GAME_REVERSE} from '../lib/constants'
 
 const MAX_NUMBER = 8
@@ -23,7 +22,6 @@ function GameMenu(props) {
       <div onChange={e => setInternalValue(parseInt(e.target.value))}>
         {[...new Array(MAX_NUMBER - MIN_NUMBER + 1)].map((e, i) => {
           const number = i + MIN_NUMBER
-          const id = randomCharacters()
           return (
             <div key={number} className="WordCountOptions">
               <label>
