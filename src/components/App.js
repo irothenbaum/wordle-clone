@@ -1,15 +1,16 @@
 import './App.css'
 import {useCallback, useEffect, useState} from 'react'
 import GameMenu from './GameMenu'
-import {SCENE_GAME_MULTIPLAYER, SCENE_GAME_REGULAR, SCENE_GAME_REVERSE, SCENE_MENU} from '../lib/constants'
+import {SCENE_GAME_VERSUS, SCENE_GAME_REGULAR, SCENE_GAME_REVERSE, SCENE_MENU} from '../lib/constants'
 import GameRegular from './GameRegular'
 import GameReverse from './GameReverse'
+import GameVersus from './Versus/GameVersus'
 
 const sceneMap = {
   [SCENE_MENU]: GameMenu,
   [SCENE_GAME_REGULAR]: GameRegular,
   [SCENE_GAME_REVERSE]: GameReverse,
-  [SCENE_GAME_MULTIPLAYER]: GameVersus,
+  [SCENE_GAME_VERSUS]: GameVersus,
 }
 
 function App() {

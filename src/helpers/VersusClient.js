@@ -30,9 +30,6 @@ class VersusClient extends SimpleObservable {
     const initEvent = new ConnectionInitEvent(code)
     this.__connection.send(Types.CONNECTION.INIT, initEvent)
     this.trigger(Types.CONNECTION.INIT, initEvent)
-
-    if (!code) {
-    }
   }
 
   async close() {

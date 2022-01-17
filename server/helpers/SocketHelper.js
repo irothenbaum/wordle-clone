@@ -111,6 +111,4 @@ const SocketHelper = {
   },
 }
 
-SocketHelper.GameMeta = GameMeta
-
 module.exports = SocketHelper

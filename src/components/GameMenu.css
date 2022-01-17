@@ -27,10 +27,6 @@
     cursor: not-allowed;
 }
 
-.GameMenu .WordCountOptions {
-    margin-top: 4px;
-}
-
 .GameMenu label, .GameMenu input {
     cursor: pointer;
 }
