@@ -5,6 +5,9 @@ import ConnectionInitEvent from './VersusEvents/ConnectionInitEvent'
 import ConnectionWaitingEvent from './VersusEvents/ConnectionWaitingEvent'
 import ConnectionReadyEvent from './VersusEvents/ConnectionReadyEvent'
 import GamePlayerReadyEvent from './VersusEvents/GamePlayerReadyEvent'
+import GameStartEvent from './VersusEvents/GameStartEvent'
+import GameWordleCompleteEvent from './VersusEvents/GameWordleCompleteEvent'
+import GameReverseCompleteEvent from './VersusEvents/GameReverseCompleteEvent'
 
 class VersusClient extends SimpleObservable {
   constructor() {
@@ -13,10 +16,9 @@ class VersusClient extends SimpleObservable {
 
   /**
    * @param {string?} code
-   * @param {string?} secretWord
    * @return {Promise<void>}
    */
-  async init(code, secretWord) {
+  async init(code) {
     await this.close()
 
     let endpoint = code ? `/game/${code}/join` : '/game/create'
@@ -29,7 +31,7 @@ class VersusClient extends SimpleObservable {
     this.__connection.on(HeartbeatSocket.EVENT_CONNECTION_CLOSED, () => {
       console.log('CONNECTION CLOSED')
     })
-    const initEvent = new ConnectionInitEvent(code, secretWord)
+    const initEvent = new ConnectionInitEvent(code)
     this.__connection.send(Types.CONNECTION.INIT, initEvent)
     this.trigger(Types.CONNECTION.INIT, initEvent)
   }
@@ -50,6 +52,31 @@ class VersusClient extends SimpleObservable {
   }
 
   /**
+   * @param {string} secretWord
+   */
+  startGame(secretWord) {
+    let eventInstance = new GameStartEvent(secretWord)
+    this.__connection.send(eventInstance.type, eventInstance)
+  }
+
+  /**
+   * @param {boolean} didSolve
+   * @param {Array<string>} guesses
+   */
+  markWordleComplete(didSolve, guesses) {
+    let eventInstance = new GameWordleCompleteEvent(didSolve, guesses)
+    this.__connection.send(eventInstance.type, eventInstance)
+  }
+
+  /**
+   * @param {Array<Array<number>>} points
+   */
+  markReverseComplete(points) {
+    let eventInstance = new GameReverseCompleteEvent(points)
+    this.__connection.send(eventInstance.type, eventInstance)
+  }
+
+  /**
    * @private
    * @param {DataMessage} dataMessage
    */
@@ -61,6 +88,18 @@ class VersusClient extends SimpleObservable {
       // -------------------------------------------------------------
       case Types.GAME.READY_STATUS:
         event = new GamePlayerReadyEvent(dataMessage.payload.status)
+        break
+
+      case Types.GAME.START:
+        event = new GameStartEvent(dataMessage.payload.secretWord)
+        break
+
+      case Types.GAME.WORDLE_COMPLETE:
+        event = new GameWordleCompleteEvent(dataMessage.payload.didSolve, dataMessage.payload.guesses)
+        break
+
+      case Types.GAME.REVERSE_COMPLETE:
+        event = new GameReverseCompleteEvent(dataMessage.payload.points)
         break
 
       // -------------------------------------------------------------

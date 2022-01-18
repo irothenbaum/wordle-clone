@@ -32,7 +32,7 @@ class GameController {
     } while (!SocketHelper.getActiveSocketByCode(req.params.code, ROLE_HOST))
 
     // mark this socket
-    SocketHelper.markSocketWithCode(socket, connectCode, ROLE_HOST, req.params.secretWord)
+    SocketHelper.markSocketWithCode(socket, connectCode, ROLE_HOST)
 
     // configure our server side handling
     SocketHelper.configureSocket(socket)
@@ -83,9 +83,7 @@ function initiateHandshake(hostSocket, opponentSocket) {
   SocketHelper.markSocketsAsConnected(hostSocket, opponentSocket)
 
   // send them both a ready event
-  let readyMessage = DataMessage.toSend(Types.CONNECTION.READY, {
-    secretWord: hostSocket._meta.secretWord,
-  })
+  let readyMessage = DataMessage.toSend(Types.CONNECTION.READY)
   SocketHelper.pushToSocket(opponentSocket, readyMessage)
   SocketHelper.pushToSocket(hostSocket, readyMessage)
 }

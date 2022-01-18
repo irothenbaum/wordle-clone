@@ -1,7 +1,7 @@
 class DataMessage {
   /**
    * @param {string} type
-   * @param {*} payload
+   * @param {*?} payload
    * @returns {DataMessage}
    */
   static toSend(type, payload) {

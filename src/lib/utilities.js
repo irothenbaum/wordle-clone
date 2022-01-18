@@ -29,6 +29,14 @@ export const getWordOfLength = length => {
 }
 
 /**
+ * @param {string} word
+ * @return {boolean}
+ */
+export const isWordInDictionary = word => {
+  return true
+}
+
+/**
  * @param {string} guessedWord
  * @param {string} secretWord
  * @return {*[]}

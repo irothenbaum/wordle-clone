@@ -3,10 +3,9 @@ const DataMessage = require('../../src/helpers/DataMessage')
 const Types = require('./../../src/helpers/VersusEvents/Types')
 
 class GameMeta {
-  constructor(code, role, secretWord) {
+  constructor(code, role) {
     this.code = code
     this.role = role
-    this.secretWord = secretWord
   }
 
   /**
@@ -52,10 +51,9 @@ const SocketHelper = {
    * @param {WebSocket} socket
    * @param {string} code
    * @param {string} role
-   * @param {string?} secretWord
    */
-  markSocketWithCode(socket, code, role, secretWord) {
-    socket._meta = new GameMeta(code, role, secretWord)
+  markSocketWithCode(socket, code, role) {
+    socket._meta = new GameMeta(code, role)
   },
 
   /**

@@ -1,8 +1,6 @@
 import './VersusMenu.css'
-import {useRef, useState} from 'react'
+import {useState} from 'react'
 import PropTypes from 'prop-types'
-import WordLengthOptions from '../WordLengthOptions'
-import {getWordOfLength} from '../../lib/utilities'
 
 const CODE_LENGTH = 6
 
@@ -12,7 +10,7 @@ function VersusMenu(props) {
 
   const handleStartNewGame = () => {
     // TODO: allow different word lengths
-    props.socket.init(null, 5).catch(props.onError)
+    props.socket.init().catch(props.onError)
   }
 
   const handleJoinGame = () => {

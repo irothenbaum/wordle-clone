@@ -39,14 +39,25 @@ function VersusStartInstructions(props) {
         {isReady ? 'Not-ready' : 'Ready!'}
       </button>
 
-      {opponentReady ? <p>Opponent is ready</p> : <p>Waiting for opponent...</p>}
+      {props.isHost ? (
+        opponentReady ? (
+          <button onClick={props.onStart}>Start game</button>
+        ) : (
+          <p>Waiting for opponent to ready up...</p>
+        )
+      ) : isReady ? (
+        <p>Waiting for host to ready up...</p>
+      ) : (
+        <p>Waiting for host to start game...</p>
+      )}
     </div>
   )
 }
 
 VersusStartInstructions.propTypes = {
   socket: PropTypes.any,
-  onReady: PropTypes.func,
+  isHost: PropTypes.bool,
+  onStart: PropTypes.func,
 }
 
 export default VersusStartInstructions

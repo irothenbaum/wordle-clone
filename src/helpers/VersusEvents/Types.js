@@ -1,6 +1,9 @@
 module.exports = {
   GAME: {
     READY_STATUS: 'game:ready-status',
+    START: 'game:start',
+    WORDLE_COMPLETE: 'game:wordle-complete',
+    REVERSE_COMPLETE: 'game:reverse-complete',
   },
   CONNECTION: {
     HEARTBEAT: 'connection:heartbeat',

@@ -4,13 +4,11 @@ const Types = require('./Types')
 class ConnectionInitEvent extends Event {
   /**
    * @param {string} code
-   * @param {string?} secretWord
    */
-  constructor(code, secretWord) {
+  constructor(code) {
     super(Types.CONNECTION.INIT)
 
     this.code = code
-    this.secretWord = secretWord
   }
 }
 
