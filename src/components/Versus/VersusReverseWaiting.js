@@ -5,7 +5,7 @@ import Types from '../../helpers/VersusEvents/Types'
 function VersusReverseWaiting({socket, onReady}) {
   useEffect(() => {
     const handler = socket.on(Types.GAME.REVERSE_COMPLETE, ev => {
-      onReady(ev.payload.points)
+      onReady(ev.points)
     })
     return () => {
       socket.off(handler)

@@ -1,16 +1,15 @@
 const SocketHelper = require('../helpers/SocketHelper')
-const DataMessage = require('../../src/helpers/DataMessage')
+const DataMessage = require('..//helpers/DataMessage')
 const CODE_LENGTH = 6
 const ROLE_OPPONENT = 'role-opponent'
 const ROLE_HOST = 'role-host'
-const Types = require('../../src/helpers/VersusEvents/Types')
 
 /**
  * @param {number?} length
  * @returns {string}
  */
 const randomCharacters = length => {
-  Math.random().toString(36).substr(2, length)
+  return Math.random().toString(36).substr(2, length)
 }
 
 class GameController {
@@ -25,11 +24,12 @@ class GameController {
     let tooManyCount = 10
     do {
       connectCode = randomCharacters(CODE_LENGTH)
+      console.log(connectCode)
 
       if (tooManyCount-- < 0) {
         throw new Error('Could not generate a unique code')
       }
-    } while (!SocketHelper.getActiveSocketByCode(req.params.code, ROLE_HOST))
+    } while (SocketHelper.getActiveSocketByCode(connectCode, ROLE_HOST))
 
     // mark this socket
     SocketHelper.markSocketWithCode(socket, connectCode, ROLE_HOST)
@@ -38,7 +38,8 @@ class GameController {
     SocketHelper.configureSocket(socket)
 
     // notify the game we're waiting for a controller to connect
-    let successMessage = DataMessage.toSend(Types.CONNECTION.WAITING, {
+    // this from the Types file
+    let successMessage = DataMessage.toSend('connection:waiting', {
       connectCode: connectCode,
     })
 
@@ -83,7 +84,8 @@ function initiateHandshake(hostSocket, opponentSocket) {
   SocketHelper.markSocketsAsConnected(hostSocket, opponentSocket)
 
   // send them both a ready event
-  let readyMessage = DataMessage.toSend(Types.CONNECTION.READY)
+  // this from the Types file
+  let readyMessage = DataMessage.toSend('connection:ready')
   SocketHelper.pushToSocket(opponentSocket, readyMessage)
   SocketHelper.pushToSocket(hostSocket, readyMessage)
 }

@@ -1,4 +1,4 @@
-import 'BannerMessage.css'
+import './BannerMessage.css'
 import PropTypes from 'prop-types'
 import {useEffect} from 'react'
 import useQuickRevertBoolean from '../hooks/useQuickRevertBoolean'

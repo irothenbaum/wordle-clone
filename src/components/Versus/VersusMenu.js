@@ -31,7 +31,7 @@ function VersusMenu(props) {
       <fieldset>
         <h4>Join a friend's game:</h4>
         <input type="text" value={joinCode} onChange={e => setJoinCode(e.target.value)} />
-        <button onClick={handleJoinGame} disabled={joinCode.length === CODE_LENGTH}>
+        <button onClick={handleJoinGame} disabled={joinCode.length !== CODE_LENGTH}>
           Join
         </button>
       </fieldset>

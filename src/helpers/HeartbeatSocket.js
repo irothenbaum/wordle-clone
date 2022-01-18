@@ -1,5 +1,5 @@
 import SimpleObservable from './SimpleObservable'
-const DataMessage = require('./DataMessage')
+import DataMessage from './DataMessage'
 
 // 50 milliseconds
 const QUEUE_CHECK_TIMEOUT = 50

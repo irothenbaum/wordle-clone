@@ -12,6 +12,8 @@ import GameReverseCompleteEvent from './VersusEvents/GameReverseCompleteEvent'
 class VersusClient extends SimpleObservable {
   constructor() {
     super()
+
+    this.__handleDataMessage = this.__handleDataMessage.bind(this)
   }
 
   /**
@@ -22,8 +24,8 @@ class VersusClient extends SimpleObservable {
     await this.close()
 
     let endpoint = code ? `/game/${code}/join` : '/game/create'
-
-    this.__connection = new HeartbeatSocket(endpoint, Types.CONNECTION.HEARTBEAT)
+    const url = window.location.origin.replace('http', 'ws') + endpoint
+    this.__connection = new HeartbeatSocket(url, Types.CONNECTION.HEARTBEAT)
     this.__connection.on(HeartbeatSocket.EVENT_MESSAGE_RECEIVED, this.__handleDataMessage)
     this.__connection.on(HeartbeatSocket.EVENT_CONNECTION_ERROR, error => {
       console.error(error)

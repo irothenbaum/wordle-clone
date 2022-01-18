@@ -1,6 +1,5 @@
-const socketServer = require('./socketServerSingleton')
-const DataMessage = require('../../src/helpers/DataMessage')
-const Types = require('./../../src/helpers/VersusEvents/Types')
+const socketServer = require('./SocketServerSingleton')
+const DataMessage = require('./DataMessage')
 
 class GameMeta {
   constructor(code, role) {
@@ -61,10 +60,12 @@ const SocketHelper = {
    */
   configureSocket(socket) {
     socket.on('message', async function (msg) {
+      console.log('RECEIVED MESSAGE: ', msg)
       let data = DataMessage.fromReceived(msg)
 
       switch (data.type) {
-        case Types.CONNECTION.HEARTBEAT:
+        // this from the Types file
+        case 'connection:heartbeat':
           SocketHelper.pushToSocket(socket, data)
           break
 

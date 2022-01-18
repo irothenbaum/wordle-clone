@@ -32,7 +32,8 @@ function GameVersus(props) {
 
   useEffect(() => {
     socket.on(Types.CONNECTION.WAITING, ev => {
-      setConnectCode(ev.payload.connectCode)
+      console.log('WAITING EVENT ', ev)
+      setConnectCode(ev.connectCode)
       setRound(ROUND_WAITING)
     })
 
@@ -41,12 +42,12 @@ function GameVersus(props) {
     })
 
     socket.on(Types.GAME.START, ev => {
-      setSecretWord(ev.payload.secretWord)
+      setSecretWord(ev.secretWord)
       setRound(ROUND_WORDLE)
     })
 
     socket.on(Types.GAME.REVERSE_COMPLETE, ev => {
-      setOpponentFinalScore(ev.payload.points)
+      setOpponentFinalScore(ev.points)
     })
 
     return () => {
@@ -58,7 +59,7 @@ function GameVersus(props) {
     if (secretWord) {
       socket.on(Types.GAME.WORDLE_COMPLETE, ev => {
         setReverseStatuses(
-          ev.payload.guesses.reduce((agr, guess) => {
+          ev.guesses.reduce((agr, guess) => {
             agr.push(determineGuessResults(guess, secretWord))
           }, []),
         )

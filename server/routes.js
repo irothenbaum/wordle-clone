@@ -7,6 +7,6 @@ const GameController = require('./controllers/GameController')
 router.get('/', asyncHandler(StaticPagesController.getApp))
 
 router.ws('/game/create', asyncHandler(GameController.socketCreateGame))
-router.ws('/game/:gameId/join', asyncHandler(GameController.socketJoinGame))
+router.ws('/game/:code/join', asyncHandler(GameController.socketJoinGame))
 
 module.exports = router

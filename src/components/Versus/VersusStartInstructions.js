@@ -8,7 +8,7 @@ function VersusStartInstructions(props) {
 
   useEffect(() => {
     const handler = props.socket.on(Types.GAME.READY_STATUS, e => {
-      setOpponentReady(e.payload.status)
+      setOpponentReady(e.status)
     })
     return () => {
       props.socket.off(handler)

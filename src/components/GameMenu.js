@@ -1,7 +1,7 @@
 import './GameMenu.css'
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
-import {BOARD_ROWS, SCENE_GAME_REGULAR, SCENE_GAME_REVERSE} from '../lib/constants'
+import {BOARD_ROWS, SCENE_GAME_REGULAR, SCENE_GAME_REVERSE, SCENE_GAME_VERSUS} from '../lib/constants'
 import WordLengthOptions from './WordLengthOptions'
 
 function GameMenu(props) {
@@ -32,6 +32,12 @@ function GameMenu(props) {
         disabled={typeof internalValue !== 'number'}
         onClick={() => props.goToScene(SCENE_GAME_REVERSE, {wordLength: internalValue, numberOfRows: BOARD_ROWS})}>
         Play Reverse
+      </button>
+
+      <hr />
+
+      <button className="PlayButton" onClick={() => props.goToScene(SCENE_GAME_VERSUS)}>
+        Play Versus
       </button>
     </div>
   )

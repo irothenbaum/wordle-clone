@@ -1,4 +1,4 @@
-import 'WordLengthOptions.css'
+import './WordLengthOptions.css'
 import PropTypes from 'prop-types'
 
 const MAX_NUMBER = 8
@@ -12,7 +12,7 @@ function WordLengthOptions(props) {
         return (
           <div key={number} className="WordCountOptions">
             <label>
-              <input name="word-length" type="radio" value={number} checked={props.value === number} />
+              <input name="word-length" type="radio" value={number} defaultChecked={props.value === number} />
               {number}
             </label>
           </div>

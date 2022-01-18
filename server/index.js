@@ -47,6 +47,12 @@ app.use('/static', express.static(path.join(__dirname, '..', 'public')))
 // load our routes
 app.use(require('./routes'))
 
+// error handler
+app.use(function (err, req, res, next) {
+  // render the error page
+  res.status(err.status || 500).send(err.message)
+})
+
 server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`)
 })
