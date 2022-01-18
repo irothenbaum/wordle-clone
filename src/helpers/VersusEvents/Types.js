@@ -1,5 +1,7 @@
 module.exports = {
-  GAME: {},
+  GAME: {
+    READY_STATUS: 'game:ready-status',
+  },
   CONNECTION: {
     HEARTBEAT: 'connection:heartbeat',
     INIT: 'connection:init',

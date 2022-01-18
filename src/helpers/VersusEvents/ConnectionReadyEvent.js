@@ -9,4 +9,4 @@ class ConnectionReadyEvent extends Event {
   }
 }
 
-module.exports = ConnectionReadyEvent
+export default ConnectionReadyEvent

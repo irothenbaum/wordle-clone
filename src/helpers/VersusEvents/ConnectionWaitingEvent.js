@@ -8,4 +8,4 @@ class ConnectionWaitingEvent extends Event {
   }
 }
 
-module.exports = ConnectionWaitingEvent
+export default ConnectionWaitingEvent

@@ -1,21 +1,22 @@
 import './GameRegular.css'
 import PropTypes from 'prop-types'
-import {useCallback, useState} from 'react'
+import {useState} from 'react'
 import {useEffect} from 'react'
 import WordRow from './WordRow'
 import Keyboard from './Keyboard'
-import {determineGuessResults, getWordOfLength} from '../lib/utilities'
-import {ALMOST, CORRECT, WRONG, SCENE_MENU, BOARD_ROWS} from '../lib/constants'
+import {getWordOfLength} from '../lib/utilities'
+import {SCENE_MENU, BOARD_ROWS} from '../lib/constants'
 import GameOverResults from './GameOverResults'
 import useQuickRevertBoolean from '../hooks/useQuickRevertBoolean'
+import useKeyboardLetterStates from '../hooks/useKeyboardLetterStates'
 
 function GameRegular(props) {
   const [previousGuesses, setPreviousGuesses] = useState([])
   const [userGuess, setUserGuess] = useState('')
   const [showGuessResults, setShowGuessResults] = useState(false)
-  const [letterStates, setLetterStates] = useState({})
   const [gameOver, setGameOver] = useState(null)
   const [secretWord, setSecretWord] = useState('')
+  const {letterStates, applyGuess} = useKeyboardLetterStates()
 
   // TODO: when should we shake the input?
   const {status: shouldShake, toggleOn: setShouldShake} = useQuickRevertBoolean()
@@ -30,7 +31,6 @@ function GameRegular(props) {
 
   useEffect(() => {
     const word = getWordOfLength(props.wordLength)
-    console.log(word)
     setSecretWord(word)
     return () => {
       // do nothing
@@ -50,31 +50,7 @@ function GameRegular(props) {
 
   const handleRevealGuessComplete = () => {
     setShowGuessResults(false)
-    // in this case, we need to feed the results into the keyboard state
-    const results = determineGuessResults(userGuess, secretWord)
-    setLetterStates({
-      ...letterStates,
-      ...userGuess.split('').reduce((agr, c, index) => {
-        // letterStates will always hold the best guess result for every character
-        // the best status could come from 3 possible values:
-        // 1. The best status from a previous guess (letterStates)
-        // 2. This current character's status in this guess (results)
-        // 3. A previous letter of the same character in this guess's status (agr)
-        let possibleStatuses = [letterStates[c], results[index], agr[c]]
-
-        // if any are Correct, then the best status is Correct. Otherwise, if any are Almost, then the best status is Almost
-        if (possibleStatuses.includes(CORRECT)) {
-          agr[c] = CORRECT
-        } else if (possibleStatuses.includes(ALMOST)) {
-          agr[c] = ALMOST
-        } else {
-          agr[c] = WRONG
-        }
-
-        return agr
-      }, {}),
-    })
-
+    applyGuess(userGuess, secretWord)
     setPreviousGuesses([...previousGuesses, userGuess])
     setUserGuess('')
   }
@@ -127,7 +103,7 @@ function GameRegular(props) {
 }
 
 GameRegular.propTypes = {
-  word: PropTypes.string,
+  wordLength: PropTypes.number,
   goToScene: PropTypes.func,
 }
 
