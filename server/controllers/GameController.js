@@ -1,5 +1,5 @@
 const SocketHelper = require('../helpers/SocketHelper')
-const DataMessage = require('..//helpers/DataMessage')
+const DataMessage = require('../helpers/DataMessage')
 const CODE_LENGTH = 6
 const ROLE_OPPONENT = 'role-opponent'
 const ROLE_HOST = 'role-host'
@@ -57,7 +57,7 @@ class GameController {
     // make sure this code isn't already in use
     let activeOpponent = SocketHelper.getActiveSocketByCode(connectCode, ROLE_OPPONENT)
     if (activeOpponent) {
-      throw new Error('Game already played')
+      throw new Error('Game full')
     }
 
     let activeGame = SocketHelper.getActiveSocketByCode(connectCode, ROLE_HOST)
