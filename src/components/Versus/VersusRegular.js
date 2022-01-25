@@ -10,7 +10,7 @@ import {isWordInDictionary} from '../../lib/utilities'
 import BannerMessage from '../BannerMessage'
 const Types = require('../../helpers/VersusEvents/Types')
 
-function VersusRegular({secretWord, socket, onGameOver}) {
+function VersusRegular({secretWord, socket, onComplete}) {
   const [previousGuesses, setPreviousGuesses] = useState([])
   const [userGuess, setUserGuess] = useState('')
   const [showGuessResults, setShowGuessResults] = useState(false)
@@ -19,7 +19,9 @@ function VersusRegular({secretWord, socket, onGameOver}) {
   const [isOpponentDone, setIsOpponentDone] = useState(false)
 
   useEffect(() => {
-    const handler = socket.on(Types.GAME.WORDLE_COMPLETE, () => setIsOpponentDone(true))
+    const handler = socket.on(Types.GAME.WORDLE_COMPLETE, () => {
+      setIsOpponentDone(true)
+    })
 
     return () => {
       socket.off(handler)
@@ -42,10 +44,10 @@ function VersusRegular({secretWord, socket, onGameOver}) {
   useEffect(() => {
     let lastGuess = previousGuesses[previousGuesses.length - 1]
     if (lastGuess === secretWord) {
-      onGameOver(true)
+      onComplete(true, previousGuesses)
       socket.markWordleComplete(true, previousGuesses)
     } else if (previousGuesses.length === BOARD_ROWS) {
-      onGameOver(false)
+      onComplete(true, previousGuesses)
       socket.markWordleComplete(false, previousGuesses)
     } else {
       // do nothing
@@ -100,7 +102,7 @@ function VersusRegular({secretWord, socket, onGameOver}) {
 VersusRegular.propTypes = {
   socket: PropTypes.any,
   secretWord: PropTypes.string,
-  onGameOver: PropTypes.func,
+  onComplete: PropTypes.func,
 }
 
 export default VersusRegular

@@ -49,7 +49,7 @@ class VersusClient extends SimpleObservable {
    * @param {boolean} status
    */
   markPlayerReady(status) {
-    let eventInstance = new GamePlayerReadyEvent()
+    let eventInstance = new GamePlayerReadyEvent(status)
     this.__connection.send(eventInstance.type, eventInstance)
   }
 

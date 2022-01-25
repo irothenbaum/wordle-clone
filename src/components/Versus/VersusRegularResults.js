@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 
 function VersusRegularResults({onReady, isWaiting}) {
   useEffect(() => {
-    if (isWaiting) {
+    if (!isWaiting) {
       setTimeout(onReady, 5000)
     }
   }, [isWaiting])

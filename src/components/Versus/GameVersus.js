@@ -10,6 +10,8 @@ import VersusRegularResults from './VersusRegularResults'
 import VersusGameOver from './VersusGameOver'
 import {determineGuessResults, getWordOfLength} from '../../lib/utilities'
 import VersusReverseWaiting from './VersusReverseWaiting'
+import VersusScratchGame from './VersusScratchGame'
+import {SCENE_MENU} from '../../lib/constants'
 const Types = require('../../helpers/VersusEvents/Types')
 
 const ROUND_MENU = 0
@@ -20,6 +22,7 @@ const ROUND_WORDLE_RESULTS = 4
 const ROUND_REVERSE = 5
 const ROUND_REVERSE_RESULTS = 6
 const ROUND_GAME_OVER = 7
+const ROUND_SCRATCH = 8
 
 function GameVersus(props) {
   const socket = useRef(new VersusClient()).current
@@ -29,6 +32,10 @@ function GameVersus(props) {
   const [reverseStatuses, setReverseStatuses] = useState([])
   const [myFinalScore, setMyFinalScore] = useState(null)
   const [opponentFinalScore, setOpponentFinalScore] = useState(null)
+
+  // starting as NULL so we can typecheck boolean
+  const [opponentScratched, setOpponentScratched] = useState(null)
+  const [iScratched, setIScratched] = useState(null)
 
   useEffect(() => {
     socket.on(Types.CONNECTION.WAITING, ev => {
@@ -42,6 +49,7 @@ function GameVersus(props) {
     })
 
     socket.on(Types.GAME.START, ev => {
+      console.log(secretWord)
       setSecretWord(ev.secretWord)
       setRound(ROUND_WORDLE)
     })
@@ -58,23 +66,42 @@ function GameVersus(props) {
   useEffect(() => {
     if (secretWord) {
       socket.on(Types.GAME.WORDLE_COMPLETE, ev => {
-        setReverseStatuses(
-          ev.guesses.reduce((agr, guess) => {
-            agr.push(determineGuessResults(guess, secretWord))
-          }, []),
-        )
+        if (ev.guesses.length === 0) {
+          setOpponentScratched(true)
+        } else {
+          setReverseStatuses(
+            ev.guesses.reduce((agr, guess) => {
+              agr.push(determineGuessResults(guess, secretWord))
+            }, []),
+          )
+        }
       })
     }
   }, [secretWord])
 
+  useEffect(() => {
+    // we only want to do this if we know for sure whether both did or do not scratch
+    if (typeof iScratched !== 'boolean' || typeof opponentScratched !== 'boolean') {
+      return
+    }
+
+    if (iScratched || opponentScratched) {
+      setRound(ROUND_SCRATCH)
+    }
+  }, [iScratched, opponentScratched])
+
   const handleHostStartGame = () => {
     // TODO: words of different lengths
-    props.socket.startGame(getWordOfLength(5))
+    const secretWord = getWordOfLength(5)
+    socket.startGame(secretWord)
+    console.log(secretWord)
+    setSecretWord(secretWord)
+    setRound(ROUND_WORDLE)
   }
 
   const handleReverseGameOver = points => {
     setMyFinalScore(points)
-    props.socket.markReverseComplete(points)
+    socket.markReverseComplete(points)
 
     if (opponentFinalScore) {
       setRound(ROUND_GAME_OVER)
@@ -97,7 +124,16 @@ function GameVersus(props) {
 
       case ROUND_WORDLE:
         return (
-          <VersusRegular secretWord={secretWord} socket={socket} onComplete={() => setRound(ROUND_WORDLE_RESULTS)} />
+          <VersusRegular
+            secretWord={secretWord}
+            socket={socket}
+            onComplete={(didSolve, guesses) => {
+              if (didSolve && guesses.length === 1) {
+                setIScratched(true)
+              }
+              setRound(ROUND_REVERSE_RESULTS)
+            }}
+          />
         )
 
       case ROUND_WORDLE_RESULTS:
@@ -111,10 +147,24 @@ function GameVersus(props) {
 
       case ROUND_GAME_OVER:
         return <VersusGameOver myPoints={myFinalScore} opponentPoints={opponentFinalScore} />
+
+      case ROUND_SCRATCH:
+        return <VersusScratchGame opponentScratched={opponentScratched} iScratched={iScratched} />
     }
   }
 
-  return <div className="GameVersus">{getComponentForRound()}</div>
+  const isTerminatedState = [ROUND_GAME_OVER, ROUND_SCRATCH].includes(round)
+
+  return (
+    <div className="GameVersus">
+      {getComponentForRound()}
+      {isTerminatedState && (
+        <div>
+          <button onClick={props.goToScene(SCENE_MENU)}>Back to Menu</button>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export default GameVersus

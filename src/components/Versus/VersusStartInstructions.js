@@ -34,11 +34,6 @@ function VersusStartInstructions(props) {
 
       <hr />
 
-      {!isReady && <p>Click to mark yourself ready</p>}
-      <button className={isReady ? 'secondary' : ''} onClick={handleReadyButton}>
-        {isReady ? 'Not-ready' : 'Ready!'}
-      </button>
-
       {props.isHost ? (
         opponentReady ? (
           <button onClick={props.onStart}>Start game</button>
@@ -46,9 +41,9 @@ function VersusStartInstructions(props) {
           <p>Waiting for opponent to ready up...</p>
         )
       ) : isReady ? (
-        <p>Waiting for host to ready up...</p>
-      ) : (
         <p>Waiting for host to start game...</p>
+      ) : (
+        <button onClick={handleReadyButton}>{'Ready!'}</button>
       )}
     </div>
   )
