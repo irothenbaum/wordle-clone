@@ -39,7 +39,6 @@ function GameVersus(props) {
 
   useEffect(() => {
     socket.on(Types.CONNECTION.WAITING, ev => {
-      console.log('WAITING EVENT ', ev)
       setConnectCode(ev.connectCode)
       setRound(ROUND_WAITING)
     })
@@ -49,7 +48,6 @@ function GameVersus(props) {
     })
 
     socket.on(Types.GAME.START, ev => {
-      console.log(secretWord)
       setSecretWord(ev.secretWord)
       setRound(ROUND_WORDLE)
     })
@@ -69,9 +67,11 @@ function GameVersus(props) {
         if (ev.guesses.length === 0) {
           setOpponentScratched(true)
         } else {
+          setOpponentScratched(false)
           setReverseStatuses(
             ev.guesses.reduce((agr, guess) => {
               agr.push(determineGuessResults(guess, secretWord))
+              return agr
             }, []),
           )
         }
@@ -94,7 +94,6 @@ function GameVersus(props) {
     // TODO: words of different lengths
     const secretWord = getWordOfLength(5)
     socket.startGame(secretWord)
-    console.log(secretWord)
     setSecretWord(secretWord)
     setRound(ROUND_WORDLE)
   }
@@ -128,16 +127,14 @@ function GameVersus(props) {
             secretWord={secretWord}
             socket={socket}
             onComplete={(didSolve, guesses) => {
-              if (didSolve && guesses.length === 1) {
-                setIScratched(true)
-              }
+              setIScratched(didSolve && guesses.length === 1)
               setRound(ROUND_REVERSE_RESULTS)
             }}
           />
         )
 
       case ROUND_WORDLE_RESULTS:
-        return <VersusRegularResults isWaiting={reverseStatuses.length === 0} onReady={setRound(ROUND_REVERSE)} />
+        return <VersusRegularResults isWaiting={reverseStatuses.length === 0} onReady={() => setRound(ROUND_REVERSE)} />
 
       case ROUND_REVERSE:
         return <VersusReverse finalWord={secretWord} patterns={reverseStatuses} onGameOver={handleReverseGameOver} />
@@ -154,13 +151,22 @@ function GameVersus(props) {
   }
 
   const isTerminatedState = [ROUND_GAME_OVER, ROUND_SCRATCH].includes(round)
+  console.log({
+    round,
+    iScratched,
+    opponentScratched,
+    reverseStatuses,
+    myFinalScore,
+    opponentFinalScore,
+    isTerminatedState,
+  })
 
   return (
     <div className="GameVersus">
       {getComponentForRound()}
       {isTerminatedState && (
         <div>
-          <button onClick={props.goToScene(SCENE_MENU)}>Back to Menu</button>
+          <button onClick={() => props.goToScene(SCENE_MENU)}>Back to Menu</button>
         </div>
       )}
     </div>

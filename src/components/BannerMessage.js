@@ -10,7 +10,12 @@ function BannerMessage({message, duration}) {
     toggleOn(duration)
   }, [])
 
-  return <div className={`BannerMessage ${status ? 'show' : ''}`}>{message}</div>
+  return (
+    <div className={`BannerMessage ${status ? 'show' : ''}`}>
+      <p>{message}</p>
+      <div className={'BannerMessageTimer'} />
+    </div>
+  )
 }
 
 BannerMessage.propTypes = {

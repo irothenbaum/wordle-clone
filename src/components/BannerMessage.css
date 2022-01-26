@@ -14,3 +14,19 @@
 .BannerMessage.show {
     transform: translateY(0);
 }
+
+.BannerMessage .BannerMessageTimer {
+    position:absolute;
+    top: 0;
+    right: 0;
+    width: 0;
+    height: 100%;
+    transition: width 5s;
+    transition-timing-function: linear;
+    background-color: #fff;
+    opacity:0.25;
+}
+
+.BannerMessage.show .BannerMessageTimer {
+    width: 100%;
+}
