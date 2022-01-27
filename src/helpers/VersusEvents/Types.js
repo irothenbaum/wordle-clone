@@ -1,3 +1,5 @@
+const Types = require('../../lib/websocket-client/Events/Types')
+
 module.exports = {
   GAME: {
     READY_STATUS: 'game:ready-status',
@@ -5,11 +7,5 @@ module.exports = {
     WORDLE_COMPLETE: 'game:wordle-complete',
     REVERSE_COMPLETE: 'game:reverse-complete',
   },
-  CONNECTION: {
-    HEARTBEAT: 'connection:heartbeat',
-    INIT: 'connection:init',
-    READY: 'connection:ready',
-    WAITING: 'connection:waiting',
-    CLOSE: 'connection:close',
-  },
+  CONNECTION: Types.CONNECTION,
 }

@@ -1,50 +1,11 @@
-import HeartbeatSocket from './HeartbeatSocket'
-import SimpleObservable from './SimpleObservable'
 const Types = require('./VersusEvents/Types')
-import ConnectionInitEvent from './VersusEvents/ConnectionInitEvent'
-import ConnectionWaitingEvent from './VersusEvents/ConnectionWaitingEvent'
-import ConnectionReadyEvent from './VersusEvents/ConnectionReadyEvent'
 import GamePlayerReadyEvent from './VersusEvents/GamePlayerReadyEvent'
 import GameStartEvent from './VersusEvents/GameStartEvent'
 import GameWordleCompleteEvent from './VersusEvents/GameWordleCompleteEvent'
 import GameReverseCompleteEvent from './VersusEvents/GameReverseCompleteEvent'
+import DefaultClient from '../lib/websocket-client/DefaultClient'
 
-class VersusClient extends SimpleObservable {
-  constructor() {
-    super()
-
-    this.__handleDataMessage = this.__handleDataMessage.bind(this)
-  }
-
-  /**
-   * @param {string?} code
-   * @return {Promise<void>}
-   */
-  async init(code) {
-    await this.close()
-
-    let endpoint = code ? `/game/${code}/join` : '/game/create'
-    const url = window.location.origin.replace('http', 'ws') + endpoint
-    this.__connection = new HeartbeatSocket(url, Types.CONNECTION.HEARTBEAT)
-    this.__connection.on(HeartbeatSocket.EVENT_MESSAGE_RECEIVED, this.__handleDataMessage)
-    this.__connection.on(HeartbeatSocket.EVENT_CONNECTION_ERROR, error => {
-      console.error(error)
-    })
-    this.__connection.on(HeartbeatSocket.EVENT_CONNECTION_CLOSED, () => {
-      console.log('CONNECTION CLOSED')
-    })
-    const initEvent = new ConnectionInitEvent(code)
-    this.__connection.send(Types.CONNECTION.INIT, initEvent)
-    this.trigger(Types.CONNECTION.INIT, initEvent)
-  }
-
-  async close() {
-    if (this.__connection) {
-      this.__connection.close()
-      this.trigger(Types.CONNECTION.CLOSE)
-    }
-  }
-
+class VersusClient extends DefaultClient {
   /**
    * @param {boolean} status
    */
@@ -78,58 +39,32 @@ class VersusClient extends SimpleObservable {
     this.__connection.send(eventInstance.type, eventInstance)
   }
 
-  /**
-   * @private
-   * @param {DataMessage} dataMessage
-   */
-  __handleDataMessage(dataMessage) {
-    let event
+  /** @inheritDoc */
+  _getConnectURL(code) {
+    const endpoint = code ? `/game/${code}/join` : '/game/create'
+    return window.location.origin.replace('http', 'ws') + endpoint
+  }
 
+  /** @inheritDoc */
+  _generateEventFromDataMessage(dataMessage) {
     // build the correct event object given the type
     switch (dataMessage.type) {
       // -------------------------------------------------------------
       case Types.GAME.READY_STATUS:
-        event = new GamePlayerReadyEvent(dataMessage.payload.status)
-        break
+        return new GamePlayerReadyEvent(dataMessage.payload.status)
 
       case Types.GAME.START:
-        event = new GameStartEvent(dataMessage.payload.secretWord)
-        break
+        return new GameStartEvent(dataMessage.payload.secretWord)
 
       case Types.GAME.WORDLE_COMPLETE:
-        event = new GameWordleCompleteEvent(dataMessage.payload.didSolve, dataMessage.payload.guesses)
-        break
+        return new GameWordleCompleteEvent(dataMessage.payload.didSolve, dataMessage.payload.guesses)
 
       case Types.GAME.REVERSE_COMPLETE:
-        event = new GameReverseCompleteEvent(dataMessage.payload.points)
-        break
-
-      // -------------------------------------------------------------
-      case Types.CONNECTION.WAITING:
-        event = new ConnectionWaitingEvent(dataMessage.payload.connectCode)
-        break
-
-      case Types.CONNECTION.INIT:
-        event = new ConnectionInitEvent(dataMessage.payload.connectCode)
-        break
-
-      case Types.CONNECTION.HEARTBEAT:
-        // do nothing
-        break
-
-      case Types.CONNECTION.READY:
-        event = new ConnectionReadyEvent()
-        break
-
-      default:
-        console.log('Unrecognized Event Type: ' + dataMessage.type)
+        return new GameReverseCompleteEvent(dataMessage.payload.points)
     }
 
-    if (event) {
-      event.timestamp = dataMessage.timestampSent
-      // broadcast the event
-      this.trigger(dataMessage.type, event)
-    }
+    console.log('Unrecognized Event Type: ' + dataMessage.type)
+    return null
   }
 }
 

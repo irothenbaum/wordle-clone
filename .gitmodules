@@ -1,0 +1,3 @@
+[submodule "src/lib/websocket-client"]
+	path = src/lib/websocket-client
+	url = git@github.com:irothenbaum/websocket-client.git
