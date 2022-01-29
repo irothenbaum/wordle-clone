@@ -72,6 +72,7 @@ function VersusRegular({secretWord, socket, onComplete}) {
       })}
       {previousGuesses.length < BOARD_ROWS && (
         <WordRow
+          key={previousGuesses.length}
           showResults={showGuessResults}
           onRevealed={handleRevealGuessComplete}
           word={userGuess}
