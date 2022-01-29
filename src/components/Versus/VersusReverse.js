@@ -2,12 +2,13 @@ import './VersusReverse.css'
 import {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import useQuickRevertBoolean from '../../hooks/useQuickRevertBoolean'
-import {getPointsForGuessReverse} from '../../lib/utilities'
+import {getPointsForGuessReverse, getSolvedAndScratchedFromBoardState} from '../../lib/utilities'
 import WordRowReversed from '../WordRowReversed'
 import {CORRECT, SCENE_MENU} from '../../lib/constants'
 import Keyboard from '../Keyboard'
 
 function VersusReverse({finalWord, patterns, onGameOver}) {
+  const [didSolve] = useState(getSolvedAndScratchedFromBoardState(patterns)[0])
   const [previousGuesses, setPreviousGuesses] = useState([])
   const [userGuess, setUserGuess] = useState('')
   const [points, setPoints] = useState([])
@@ -15,7 +16,7 @@ function VersusReverse({finalWord, patterns, onGameOver}) {
   const [misMatchPositions, setMisMatchPositions] = useState([])
 
   useEffect(() => {
-    if (previousGuesses.length === patterns.length) {
+    if (previousGuesses.length === (didSolve ? patterns.length - 1 : patterns.length)) {
       onGameOver(points)
     }
   }, [previousGuesses])
@@ -43,8 +44,8 @@ function VersusReverse({finalWord, patterns, onGameOver}) {
 
   return (
     <div className="GameReverse">
-      {/* We do rows - 1 because the last row is always 100% correct */}
-      {[...new Array(props.numberOfRows - 1)].map((e, index) => {
+      {/* If they solved it then the last row is correct and should not be guessable, so we slice length - 1 */}
+      {(didSolve ? patterns.slice(0, patterns.length - 1) : patterns).map((e, index) => {
         const isFocused = index === previousGuesses.length
         const guessedWord = (isFocused ? userGuess : previousGuesses[index]) || ''
 
@@ -62,7 +63,7 @@ function VersusReverse({finalWord, patterns, onGameOver}) {
         )
       })}
 
-      <WordRowReversed word={finalWord} isShaking={shouldShake} statusPattern={[...finalWord].map(char => CORRECT)} />
+      <WordRowReversed word={finalWord} statusPattern={[...finalWord].map(char => CORRECT)} />
 
       <Keyboard
         value={userGuess}
@@ -79,7 +80,7 @@ function VersusReverse({finalWord, patterns, onGameOver}) {
 VersusReverse.propTypes = {
   finalWord: PropTypes.string,
   patterns: PropTypes.array,
-  onGameOver: PropTypes.array,
+  onGameOver: PropTypes.func,
 }
 
 export default VersusReverse

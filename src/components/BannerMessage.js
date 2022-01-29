@@ -13,7 +13,7 @@ function BannerMessage({message, duration}) {
   return (
     <div className={`BannerMessage ${status ? 'show' : ''}`}>
       <p>{message}</p>
-      <div className={'BannerMessageTimer'} />
+      <div className={'BannerMessageTimer'} style={{transition: `width ${duration / 1000}s`}} />
     </div>
   )
 }

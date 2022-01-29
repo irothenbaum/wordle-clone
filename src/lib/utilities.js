@@ -39,7 +39,7 @@ export const isWordInDictionary = word => {
 /**
  * @param {string} guessedWord
  * @param {string} secretWord
- * @return {*[]}
+ * @return {Array<Array<string>>}
  */
 export const determineGuessResults = (guessedWord, secretWord) => {
   let retVal = []
@@ -75,6 +75,16 @@ export const determineGuessResults = (guessedWord, secretWord) => {
   }
 
   return retVal
+}
+
+/**
+ * @param {Array<Array<string>>} boardState
+ * @return {(*|boolean)[]}
+ */
+export const getSolvedAndScratchedFromBoardState = boardState => {
+  let didSolve = boardState[boardState.length - 1].every(s => s === CORRECT)
+  let didScratch = didSolve && boardState.length === 1
+  return [didSolve, didScratch]
 }
 
 /**

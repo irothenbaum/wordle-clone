@@ -6,7 +6,7 @@ import {BOARD_ROWS} from '../../lib/constants'
 import PropTypes from 'prop-types'
 import WordRow from '../WordRow'
 import Keyboard from '../Keyboard'
-import {isWordInDictionary} from '../../lib/utilities'
+import {determineGuessResults, isWordInDictionary} from '../../lib/utilities'
 import BannerMessage from '../BannerMessage'
 const Types = require('../../helpers/VersusEvents/Types')
 
@@ -43,12 +43,14 @@ function VersusRegular({secretWord, socket, onComplete}) {
 
   useEffect(() => {
     let lastGuess = previousGuesses[previousGuesses.length - 1]
+    let boardState = previousGuesses.reduce((agr, guess) => {
+      agr.push(determineGuessResults(guess, secretWord))
+      return agr
+    }, [])
     if (lastGuess === secretWord) {
-      onComplete(true, previousGuesses)
-      socket.markWordleComplete(true, previousGuesses)
+      onComplete(boardState)
     } else if (previousGuesses.length === BOARD_ROWS) {
-      onComplete(true, previousGuesses)
-      socket.markWordleComplete(false, previousGuesses)
+      onComplete(boardState)
     } else {
       // do nothing
     }
@@ -70,7 +72,6 @@ function VersusRegular({secretWord, socket, onComplete}) {
       })}
       {previousGuesses.length < BOARD_ROWS && (
         <WordRow
-          key={previousGuesses.length}
           showResults={showGuessResults}
           onRevealed={handleRevealGuessComplete}
           word={userGuess}

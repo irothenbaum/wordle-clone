@@ -8,10 +8,10 @@ import VersusReverse from './VersusReverse'
 import VersusRegular from './VersusRegular'
 import VersusRegularResults from './VersusRegularResults'
 import VersusGameOver from './VersusGameOver'
-import {determineGuessResults, getWordOfLength} from '../../lib/utilities'
+import {getSolvedAndScratchedFromBoardState, getWordOfLength} from '../../lib/utilities'
 import VersusReverseWaiting from './VersusReverseWaiting'
 import VersusScratchGame from './VersusScratchGame'
-import {SCENE_MENU} from '../../lib/constants'
+import {CORRECT, SCENE_MENU} from '../../lib/constants'
 const Types = require('../../helpers/VersusEvents/Types')
 
 const ROUND_MENU = 0
@@ -30,16 +30,20 @@ function GameVersus(props) {
   const [connectCode, setConnectCode] = useState(null)
   const [secretWord, setSecretWord] = useState(null)
   const [reverseStatuses, setReverseStatuses] = useState([])
-  const [myFinalScore, setMyFinalScore] = useState(null)
-  const [opponentFinalScore, setOpponentFinalScore] = useState(null)
+  const [isHost, setIsHost] = useState(null)
 
   // starting as NULL so we can typecheck boolean
   const [opponentScratched, setOpponentScratched] = useState(null)
+  const [opponentSolvedSecretWord, setOpponentSolvedSecretWord] = useState(null)
+  const [opponentPoints, setOpponentPoints] = useState(null)
   const [iScratched, setIScratched] = useState(null)
+  const [iSolvedSecretWord, setISolvedSecretWord] = useState(null)
+  const [myPoints, setMyPoints] = useState(null)
 
   useEffect(() => {
     socket.on(Types.CONNECTION.WAITING, ev => {
       setConnectCode(ev.connectCode)
+      setIsHost(true)
       setRound(ROUND_WAITING)
     })
 
@@ -53,7 +57,7 @@ function GameVersus(props) {
     })
 
     socket.on(Types.GAME.REVERSE_COMPLETE, ev => {
-      setOpponentFinalScore(ev.points)
+      setOpponentPoints(ev.points)
     })
 
     return () => {
@@ -64,17 +68,10 @@ function GameVersus(props) {
   useEffect(() => {
     if (secretWord) {
       socket.on(Types.GAME.WORDLE_COMPLETE, ev => {
-        if (ev.guesses.length === 0) {
-          setOpponentScratched(true)
-        } else {
-          setOpponentScratched(false)
-          setReverseStatuses(
-            ev.guesses.reduce((agr, guess) => {
-              agr.push(determineGuessResults(guess, secretWord))
-              return agr
-            }, []),
-          )
-        }
+        setReverseStatuses(ev.boardState)
+        let [didSolve, didScratch] = getSolvedAndScratchedFromBoardState(ev.boardState)
+        setOpponentSolvedSecretWord(didSolve)
+        setOpponentScratched(didScratch)
       })
     }
   }, [secretWord])
@@ -90,25 +87,6 @@ function GameVersus(props) {
     }
   }, [iScratched, opponentScratched])
 
-  const handleHostStartGame = () => {
-    // TODO: words of different lengths
-    const secretWord = getWordOfLength(5)
-    socket.startGame(secretWord)
-    setSecretWord(secretWord)
-    setRound(ROUND_WORDLE)
-  }
-
-  const handleReverseGameOver = points => {
-    setMyFinalScore(points)
-    socket.markReverseComplete(points)
-
-    if (opponentFinalScore) {
-      setRound(ROUND_GAME_OVER)
-    } else {
-      setRound(ROUND_REVERSE_RESULTS)
-    }
-  }
-
   const getComponentForRound = () => {
     switch (round) {
       case ROUND_MENU:
@@ -118,32 +96,68 @@ function GameVersus(props) {
         return <VersusWaiting gameCode={connectCode} />
 
       case ROUND_START:
-        // only the host has a connectCode state value
-        return <VersusStartInstructions onStart={handleHostStartGame} socket={socket} isHost={!!connectCode} />
+        return (
+          <VersusStartInstructions
+            onStart={() => {
+              // TODO: words of different lengths
+              const secretWord = getWordOfLength(5)
+              socket.startGame(secretWord)
+              setSecretWord(secretWord)
+              setRound(ROUND_WORDLE)
+            }}
+            socket={socket}
+            isHost={isHost}
+          />
+        )
 
       case ROUND_WORDLE:
         return (
           <VersusRegular
             secretWord={secretWord}
             socket={socket}
-            onComplete={(didSolve, guesses) => {
-              setIScratched(didSolve && guesses.length === 1)
-              setRound(ROUND_REVERSE_RESULTS)
+            onComplete={boardState => {
+              let [didSolve, didScratch] = getSolvedAndScratchedFromBoardState(boardState)
+              setISolvedSecretWord(didSolve)
+              setIScratched(didScratch)
+              setRound(ROUND_WORDLE_RESULTS)
+              socket.markWordleComplete(boardState)
             }}
           />
         )
 
       case ROUND_WORDLE_RESULTS:
-        return <VersusRegularResults isWaiting={reverseStatuses.length === 0} onReady={() => setRound(ROUND_REVERSE)} />
+        return (
+          <VersusRegularResults
+            isWaiting={typeof opponentSolvedSecretWord !== 'boolean'}
+            onReady={() => setRound(ROUND_REVERSE)}
+          />
+        )
 
       case ROUND_REVERSE:
-        return <VersusReverse finalWord={secretWord} patterns={reverseStatuses} onGameOver={handleReverseGameOver} />
+        return (
+          <VersusReverse
+            finalWord={secretWord}
+            patterns={reverseStatuses}
+            onGameOver={points => {
+              setMyPoints(points)
+              socket.markReverseComplete(points)
+              setRound(ROUND_REVERSE_RESULTS)
+            }}
+          />
+        )
 
       case ROUND_REVERSE_RESULTS:
-        return <VersusReverseWaiting socket={socket} />
+        return (
+          <VersusReverseWaiting
+            onReady={() => {
+              setRound(ROUND_GAME_OVER)
+            }}
+            isWaiting={!Array.isArray(opponentPoints)}
+          />
+        )
 
       case ROUND_GAME_OVER:
-        return <VersusGameOver myPoints={myFinalScore} opponentPoints={opponentFinalScore} />
+        return <VersusGameOver myPoints={myPoints} opponentPoints={opponentPoints} />
 
       case ROUND_SCRATCH:
         return <VersusScratchGame opponentScratched={opponentScratched} iScratched={iScratched} />
@@ -156,8 +170,6 @@ function GameVersus(props) {
     iScratched,
     opponentScratched,
     reverseStatuses,
-    myFinalScore,
-    opponentFinalScore,
     isTerminatedState,
   })
 

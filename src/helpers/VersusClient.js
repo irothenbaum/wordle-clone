@@ -23,11 +23,10 @@ class VersusClient extends DefaultClient {
   }
 
   /**
-   * @param {boolean} didSolve
-   * @param {Array<string>} guesses
+   * @param {Array<Array<string>>} boardState
    */
-  markWordleComplete(didSolve, guesses) {
-    let eventInstance = new GameWordleCompleteEvent(didSolve, guesses)
+  markWordleComplete(boardState) {
+    let eventInstance = new GameWordleCompleteEvent(boardState)
     this.__connection.send(eventInstance.type, eventInstance)
   }
 
@@ -57,7 +56,7 @@ class VersusClient extends DefaultClient {
         return new GameStartEvent(dataMessage.payload.secretWord)
 
       case Types.GAME.WORDLE_COMPLETE:
-        return new GameWordleCompleteEvent(dataMessage.payload.didSolve, dataMessage.payload.guesses)
+        return new GameWordleCompleteEvent(dataMessage.payload.boardState)
 
       case Types.GAME.REVERSE_COMPLETE:
         return new GameReverseCompleteEvent(dataMessage.payload.points)
