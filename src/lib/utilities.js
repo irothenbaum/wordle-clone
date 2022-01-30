@@ -11,6 +11,7 @@ const words5 = require('./dictionaries/words5.json')
 const words6 = require('./dictionaries/words6.json')
 const words7 = require('./dictionaries/words7.json')
 const words8 = require('./dictionaries/words8.json')
+const allWords = require('./dictionaries/all-words.json')
 
 const dictionary = {
   words5,
@@ -33,7 +34,7 @@ export const getWordOfLength = length => {
  * @return {boolean}
  */
 export const isWordInDictionary = word => {
-  return true
+  return allWords.includes(word)
 }
 
 /**
