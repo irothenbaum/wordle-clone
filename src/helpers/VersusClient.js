@@ -40,7 +40,7 @@ class VersusClient extends DefaultClient {
 
   /** @inheritDoc */
   _getConnectURL(code) {
-    const endpoint = code ? `/game/${code}/join` : '/game/create'
+    const endpoint = code ? `/versus/${code}/join` : '/versus/create'
     return window.location.origin.replace('http', 'ws') + endpoint
   }
 
