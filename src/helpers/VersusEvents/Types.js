@@ -1,4 +1,4 @@
-const Types = require('../../lib/websocket-client/Events/Types')
+import {Types} from 'websocket-client'
 
 module.exports = {
   GAME: {

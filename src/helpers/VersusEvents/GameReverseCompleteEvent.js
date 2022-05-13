@@ -1,4 +1,4 @@
-import Event from '../../lib/websocket-client/Events/Event'
+import {Event} from 'websocket-client'
 const Types = require('./Types')
 
 class GameReverseCompleteEvent extends Event {

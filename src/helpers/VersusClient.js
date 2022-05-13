@@ -3,7 +3,7 @@ import GamePlayerReadyEvent from './VersusEvents/GamePlayerReadyEvent'
 import GameStartEvent from './VersusEvents/GameStartEvent'
 import GameWordleCompleteEvent from './VersusEvents/GameWordleCompleteEvent'
 import GameReverseCompleteEvent from './VersusEvents/GameReverseCompleteEvent'
-import DefaultClient from '../lib/websocket-client/DefaultClient'
+import {DefaultClient} from 'websocket-client'
 
 class VersusClient extends DefaultClient {
   /**
