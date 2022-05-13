@@ -1,4 +1,4 @@
-const Types = require('./VersusEvents/Types')
+import Types from './VersusEvents/Types'
 import GamePlayerReadyEvent from './VersusEvents/GamePlayerReadyEvent'
 import GameStartEvent from './VersusEvents/GameStartEvent'
 import GameWordleCompleteEvent from './VersusEvents/GameWordleCompleteEvent'

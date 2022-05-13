@@ -1,5 +1,5 @@
 import {Event} from 'websocket-client'
-const Types = require('./Types')
+import Types from './Types'
 
 class GameStartEvent extends Event {
   constructor(secretWord) {
