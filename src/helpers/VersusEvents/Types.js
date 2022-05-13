@@ -1,6 +1,6 @@
 import {Types} from 'websocket-client'
 
-module.exports = {
+const VersusTypes = {
   GAME: {
     READY_STATUS: 'game:ready-status',
     START: 'game:start',
@@ -10,3 +10,5 @@ module.exports = {
   },
   CONNECTION: Types.CONNECTION,
 }
+
+export default VersusTypes
