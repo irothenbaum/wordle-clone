@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react'
 import PropTypes from 'prop-types'
-const Types = require('../../helpers/VersusEvents/Types')
+import Types from '../../helpers/VersusEvents/Types'
 
 function VersusStartInstructions(props) {
   const [isReady, setIsReady] = useState(false)

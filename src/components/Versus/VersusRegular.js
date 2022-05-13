@@ -8,7 +8,7 @@ import WordRow from '../WordRow'
 import Keyboard from '../Keyboard'
 import {determineGuessResults, isWordInDictionary} from '../../lib/utilities'
 import BannerMessage from '../BannerMessage'
-const Types = require('../../helpers/VersusEvents/Types')
+import Types from '../../helpers/VersusEvents/Types'
 
 function VersusRegular({secretWord, socket, onComplete}) {
   const [previousGuesses, setPreviousGuesses] = useState([])

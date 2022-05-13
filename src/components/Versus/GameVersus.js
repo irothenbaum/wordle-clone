@@ -12,7 +12,7 @@ import {getSolvedAndScratchedFromBoardState, getWordOfLength} from '../../lib/ut
 import VersusReverseWaiting from './VersusReverseWaiting'
 import VersusScratchGame from './VersusScratchGame'
 import {CORRECT, SCENE_MENU} from '../../lib/constants'
-const Types = require('../../helpers/VersusEvents/Types')
+import Types from '../../helpers/VersusEvents/Types'
 
 const ROUND_MENU = 0
 const ROUND_WAITING = 1
